@@ -3,7 +3,6 @@ const UserRepository = require("../Repositories/user.repository")
 class UserService {
     getUserById = async (data) => {
         try {
-            console.log(data);
             const response = UserRepository.SelectUserByID(data)
             return response;
         } catch (err) {

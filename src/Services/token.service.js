@@ -3,9 +3,9 @@ require("dotenv").config();
 const { AuthenticationError } = require("../utils/custom.error");
 
 class TokenService {
-    async GenerateAccessToken() {
+    async GenerateAccessToken(payload) {
         try {
-            const accessToken = await jwt.sign({ type: "accTk" }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: process.env.ACCESS_TOKEN_DURATION });
+            const accessToken = await jwt.sign({ sub: payload }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: process.env.ACCESS_TOKEN_DURATION });
             return accessToken;
         } catch (err) {
             throw new AuthenticationError('Failed to generate access token');

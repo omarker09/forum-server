@@ -1,5 +1,5 @@
-const TokenService = require("../services/token.service")
-const AuthService = require("../services/auth.service")
+const TokenService = require("../Services/token.service")
+const AuthService = require("../Services/auth.service")
 const Encryption = require("../Utils/encryption.utils")
 
 class AuthController {
@@ -11,10 +11,9 @@ class AuthController {
         try {
             const response = await AuthService.LoginService(payload)
             if (response) {
-                var tt = "U2FsdGVkX1/6zYGJJFfhaw2oeCAmZuxFGArGxm9bThQ="
-                const useid = response.user_id
-                const accessToken = await TokenService.GenerateAccessToken()
-                const refreshToken = await TokenService.GenerateRefreshToken(await Encryption.Encrypt_AES(useid.toString())); //Encryption.Encrypt_AES(response.use_id)
+                const user_id = response.user_id
+                const accessToken = await TokenService.GenerateAccessToken(await Encryption.Encrypt_AES(user_id.toString()))
+                const refreshToken = await TokenService.GenerateRefreshToken(await Encryption.Encrypt_AES(user_id.toString())); //Encryption.Encrypt_AES(response.use_id)
                 return res.json(
                 {
                     Access_token: accessToken,

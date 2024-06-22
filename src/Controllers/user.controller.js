@@ -1,17 +1,19 @@
 const UserService = require("../Services/user.service")
 const TokenService = require("../Services/token.service")
+const EncryptionService = require("../Utils/encryption.utils")
 
 class UserController {
     getUserData = async (req,res) => {
         try {
-            await TokenService.VerifyAccessToken(req.token)
+            const verfiedTokenResponse = await TokenService.VerifyAccessToken(req.token)
+            console.log(verfiedTokenResponse);
+            const decryptedUserID = await EncryptionService.DECRYPT_AES(verfiedTokenResponse.sub)
             const payload = {
-                user_id: req.body.user_id
+                user_id: decryptedUserID
             }
             const response = await UserService.getUserById(payload)
             return res.status(200).json({
-                data: response,
-                message: "ok thanks"
+                data: response
             })
         } catch (error) {
             return res.status(error.statusCode).json({

@@ -1,13 +1,15 @@
-const TokenService = require("../services/token.service");
+const TokenService = require("../Services/token.service");
 const cookie = require('cookie');
+const EncryptionService = require("../Utils/encryption.utils")
 
 class RefreshController {
     async RefreshAccessToken(req, res) {
         try {
             const verifyRefreshToken = await TokenService.VerifyRefreshToken(req.token);
-        
+            const decryptedUserID = await EncryptionService.DECRYPT_AES(verifyRefreshToken.sub)
+            console.log(decryptedUserID);
             if (verifyRefreshToken) {
-              const newAccessToken = await TokenService.GenerateAccessToken();
+              const newAccessToken = await TokenService.GenerateAccessToken(await EncryptionService.Encrypt_AES(decryptedUserID.toString()));
         
               // Set the access token as a secure and HttpOnly cookie
               const refreshTokenCookie = cookie.serialize('refreshToken', verifyRefreshToken.token, {
