@@ -2,7 +2,7 @@
 class DatabaseError extends Error {
     constructor(message) {
         super(message);
-        this.name = "DatabaseError";
+        this.name = "ServerError";
         this.statusCode = 500;
     }
 }
@@ -40,7 +40,7 @@ class TransactionError extends Error {
         this.statusCode = 403
     }
 }
-// Export the custom error classes
+// Export error classes
 module.exports = {
     DatabaseError,
     ValidationError,

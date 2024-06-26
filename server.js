@@ -6,9 +6,11 @@ const express = require("express");
 const httpServer = express();
 const cors = require("cors");
 const bodyParser = require("body-parser");
+const helmet = require("helmet")
+const cookieParser = require('cookie-parser');
 const PORT = 5000;
 require("dotenv").config();
-const helmet = require("helmet")
+
 
 
 const AuthRoute = require("./src/routes/auth.route");
@@ -20,9 +22,10 @@ const UserRoute = require("./src/Routes/user.route")
 
 // Implements Protection Functions
 const corsOptions = {
-  origin: '*',
+  origin: 'http://localhost:3000',
   methods: ['GET', 'POST', 'PUT', 'DELETE'], // Specify the allowed HTTP methods
   allowedHeaders: ['Authorization', 'Content-Type'],
+  credentials: true // Correctly spelled
 };
 
 const allowBrowserOnly = (req, res, next) => {
@@ -54,6 +57,7 @@ httpServer.use(cors(corsOptions));
 httpServer.use(bodyParser.json());
 httpServer.use(express.json());
 httpServer.use(helmet());
+httpServer.use(cookieParser());
 
 // Implementing Routes
 httpServer.use("/auth", AuthRoute);

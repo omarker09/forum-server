@@ -1,6 +1,7 @@
 const TokenService = require("../Services/token.service")
 const AuthService = require("../Services/auth.service")
 const Encryption = require("../Utils/encryption.utils")
+const cookie = require('cookie');
 
 class AuthController {
      async AuthLogin(req,res) {
@@ -13,7 +14,17 @@ class AuthController {
             if (response) {
                 const user_id = response.user_id
                 const accessToken = await TokenService.GenerateAccessToken(await Encryption.Encrypt_AES(user_id.toString()))
-                const refreshToken = await TokenService.GenerateRefreshToken(await Encryption.Encrypt_AES(user_id.toString())); //Encryption.Encrypt_AES(response.use_id)
+                const refreshToken = await TokenService.GenerateRefreshToken(await Encryption.Encrypt_AES(user_id.toString()));
+                const cookieOptions = {
+                    httpOnly: true,
+                    secure: false, // Ensure this is true if using HTTPS
+                    sameSite: 'strict',
+                    maxAge: 24 * 60 * 60 * 1000, // 1 day in milliseconds
+                    path: '/'
+                }; 
+                const serializedCookie = cookie.serialize('_gha', refreshToken, cookieOptions);
+                res.setHeader('Set-Cookie', serializedCookie);
+
                 return res.json(
                 {
                     Access_token: accessToken,
@@ -52,14 +63,32 @@ class AuthController {
             })
         }
     }
-    async AuthTest(req,res) {
+    async AuthVerify(req,res) {
         try {
-            const isAccessValid = await TokenService.VerifyAccessToken(req.token)
-            return res.json({"isValid": isAccessValid});
+            const isAccessValid = req?.cookies?._gha; // Check if _gha cookie exists
+            if (!isAccessValid) {
+            return res.status(401).json({ isValid: false });
+            }
+            // Optionally, verify the access token or refresh token here
+            await TokenService.VerifyRefreshToken(isAccessValid)
+            res.status(200).json({ isValid: true });
+        } catch (err) {
+            res.status(200).json({ isValid: false });
+        }
+    }
+    async Logout(req,res) {
+        try {
+            res.cookie('_gha', '', { 
+                httpOnly: true, 
+                secure: false, // set to true if using https
+                expires: new Date(0) 
+            });
+              // Optionally, you can add a response to indicate successful logout
+            res.status(200).json({ message: 'Logout successful' });
         } catch (error) {
             return res.status(error.statusCode).json({
                 message: error.message,
-                errorType: error.errorType,
+                errorType: error.name,
                 statusCode: error.statusCode
             })
         }

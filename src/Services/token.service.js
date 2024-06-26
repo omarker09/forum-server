@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
-const { AuthenticationError } = require("../utils/custom.error");
+const { AuthenticationError } = require("../Utils/custom.error");
 
 class TokenService {
     async GenerateAccessToken(payload) {

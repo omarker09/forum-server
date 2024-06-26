@@ -1,5 +1,5 @@
 const pool = require("../configs/db")
-const {DatabaseError, TransactionError} = require("../utils/custom.error")
+const {DatabaseError, TransactionError} = require("../Utils/custom.error")
 require("dotenv").config()
 
 class CreditsRepository {
