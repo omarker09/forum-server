@@ -19,10 +19,16 @@ class AuthController {
                     httpOnly: true,
                     secure: false, // Ensure this is true if using HTTPS
                     sameSite: 'strict',
-                    maxAge: 24 * 60 * 60 * 1000, // 1 day in milliseconds
+                    maxAge: 86400000 , // 1 day in milliseconds
                     path: '/'
                 }; 
-                const serializedCookie = cookie.serialize('_gha', refreshToken, cookieOptions);
+                const serializedCookie = cookie.serialize('_gha', refreshToken, {
+                    httpOnly: true,
+                    secure: true, // Ensure this is true if using HTTPS
+                    sameSite: 'strict',
+                    expires: new Date(Date.now() + 86360000),
+                    path: '/'
+                });
                 res.setHeader('Set-Cookie', serializedCookie);
 
                 return res.json(

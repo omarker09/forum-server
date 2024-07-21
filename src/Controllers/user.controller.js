@@ -6,7 +6,6 @@ class UserController {
     getUserData = async (req,res) => {
         try {
             const verfiedTokenResponse = await TokenService.VerifyAccessToken(req.token)
-            console.log(verfiedTokenResponse);
             const decryptedUserID = await EncryptionService.DECRYPT_AES(verfiedTokenResponse.sub)
             const payload = {
                 user_id: decryptedUserID
