@@ -1,5 +1,5 @@
 //---------------------------------------------------------------//
-//         Copyright© - powered by Cayonix.com - 2024            //
+//       Copyright© - powered by @omarker09 Cayonix.com - 2024   //
 //---------------------------------------------------------------//
 
 const express = require("express");
